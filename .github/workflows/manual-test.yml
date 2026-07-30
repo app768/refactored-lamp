@@ -1,0 +1,49 @@
+name: Refactored Lamp
+
+on:
+  workflow_dispatch:
+
+concurrency:
+  group: refactored-lamp
+  cancel-in-progress: false
+
+jobs:
+  run-bot:
+    runs-on: ubuntu-latest
+    timeout-minutes: 300
+
+    steps:
+      - name: Check out project
+        uses: actions/checkout@v6
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v6
+        with:
+          node-version: 22
+          cache: npm
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Ensure ffprobe is available
+        run: |
+          if ! command -v ffprobe >/dev/null 2>&1; then
+            sudo apt-get update
+            sudo apt-get install -y ffmpeg
+          fi
+
+      - name: Run D1 queue transfer worker
+        run: npm start
+        env:
+          QUEUE_API_URL: ${{ secrets.QUEUE_API_URL }}
+          QUEUE_API_TOKEN: ${{ secrets.QUEUE_API_TOKEN }}
+          BOT_TOKEN: ${{ secrets.BOT_TOKEN }}
+          E2_ENDPOINT: ${{ secrets.E2_ENDPOINT }}
+          E2_ACCESS_KEY: ${{ secrets.E2_ACCESS_KEY }}
+          E2_SECRET_KEY: ${{ secrets.E2_SECRET_KEY }}
+          E2_REGION: ${{ secrets.E2_REGION }}
+          PART_SIZE_MB: "25"
+          QUEUE_SIZE: "4"
+          CONCURRENCY: "2"
+          PROGRESS_INTERVAL_MS: "7000"
+          POLL_INTERVAL_MS: "2000"
