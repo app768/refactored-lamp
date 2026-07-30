@@ -1,0 +1,16 @@
+{
+  "name": "transfer-bot",
+  "version": "1.0.0",
+  "description": "Telegram bot for streaming URL -> iDrive E2 transfers via a VPS worker",
+  "main": "bot.js",
+  "scripts": {
+    "start": "node bot.js",
+    "test": "node --test"
+  },
+  "dependencies": {
+    "@aws-sdk/client-s3": "^3.658.0",
+    "@aws-sdk/lib-storage": "^3.658.0",
+    "axios": "^1.7.7",
+    "dotenv": "^16.4.5"
+  }
+}
